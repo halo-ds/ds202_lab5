@@ -1,0 +1,31 @@
+---
+title: "Lab 5"
+author: "Hannah Lo/Owner(halo-ds) and Yuma Anderson(yumaanderson)"
+date: "10/31/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+```
+
+## Data Preprocess
+
+We are working with a diabetes dataset that contains 19 variables from 403 observations. 
+```{r}
+data = read.table('diabetes.txt',header=TRUE)
+head(data)
+```
+
+Missing values in the variable 'frame' were replaced with 'NA'.
+```{r}
+data$frame[data$frame==''] = NA
+data$frame = droplevels(data$frame)
+table(data$frame)
+```
+
+The variables 'id','bp.2s', and 'bp.2d' were dropped from the dataframe. 
+```{r}
+diabetes_reduced = select(data,-'id',-'bp.2s',-'bp.2d')
+```
+
