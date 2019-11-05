@@ -29,3 +29,34 @@ The variables 'id','bp.2s', and 'bp.2d' were dropped from the dataframe.
 diabetes_reduced = select(data,-'id',-'bp.2s',-'bp.2d')
 ```
 
+Cleanaed the dataset by removing any rows with NA values. 
+```{r}
+index.na=apply(is.na(diabetes_reduced), 1, any)
+diabetes_clean = diabetes_reduced[-which(index.na),]
+```
+
+To check that all NA values were removed, the number of rows that contain NA values were computed. 
+```{r}
+index.check=apply(is.na(diabetes_clean), 1, any)
+which(index.check)
+```
+
+## Exploring and Transforming Data
+
+The variable 'glyhb' is right skewed. We can remedy this by using the logarthmic function on the 'glyhb' variable. Some potential downsides to this approach is ________
+```{r}
+diabetes_clean %>% ggplot(aes(glyhb))+ geom_histogram(binwidth = 1)
+```
+
+The variable 'glyhb_star' was created by taking the log and is plotted in the following to show its new distribution: 
+```{r}
+
+```
+
+Summary statistics 
+```{r}
+
+```
+
+## Visualizations 
+
