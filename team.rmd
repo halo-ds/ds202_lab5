@@ -29,7 +29,7 @@ The variables 'id','bp.2s', and 'bp.2d' were dropped from the dataframe.
 diabetes_reduced = select(data,-'id',-'bp.2s',-'bp.2d')
 ```
 
-Cleanaed the dataset by removing any rows with NA values. 
+Cleaned the dataset by removing any rows with NA values. 
 ```{r}
 index.na=apply(is.na(diabetes_reduced), 1, any)
 diabetes_clean = diabetes_reduced[-which(index.na),]
@@ -43,20 +43,75 @@ which(index.check)
 
 ## Exploring and Transforming Data
 
-The variable 'glyhb' is right skewed. We can remedy this by using the logarthmic function on the 'glyhb' variable. Some potential downsides to this approach is ________
+The variable 'glyhb' is right skewed. We can remedy this by using the logarthmic function on the 'glyhb' variable. Some potential downsides to this approach is that ths transformation is nonlinear; therefore, the insights we gain from looking at it transformed may not translate to the original data. 
 ```{r}
-diabetes_clean %>% ggplot(aes(glyhb))+ geom_histogram(binwidth = 1)
+diabetes_clean %>% ggplot(aes(glyhb))+ geom_histogram(bins=25, fill='pink') +labs(title="Histogram of Glycosolated Hemoglobin",x='Glycosolated Hemoglobin')
 ```
 
 The variable 'glyhb_star' was created by taking the log and is plotted in the following to show its new distribution: 
 ```{r}
-
+diabetes_clean$glyhb_star = log(diabetes_clean$glyhb)
+diabetes_clean %>% ggplot(aes(glyhb_star))+ geom_histogram(bins=50,fill='red')+labs(title="Histogram of the log of Glycosolated Hemoglobin",x='log(Glycosolated Hemoglobin)')
 ```
 
-Summary statistics 
+Summary statistics were computed. The following table shows a larger mean glyhb value for a larger frame.
 ```{r}
+diabetes_clean %>% group_by(frame) %>% summarise(mean.glyhb = mean(glyhb_star))
+```
 
+The following table shows only a slightly greater mean glyhb for males than females. 
+```{r}
+diabetes_clean %>% group_by(gender) %>% summarise(mean.glyhb = mean(glyhb_star))
+```
+
+The following table shows only a slightly greater mean glyhb for the location Buckingham than Louisa. 
+```{r}
+diabetes_clean %>% group_by(location) %>% summarise(mean.glyhb = mean(glyhb_star))
 ```
 
 ## Visualizations 
 
+## Messy Data
+
+## Regression Models
+
+The following regression model was fit with the label glyhb_star and the following features: stabilized glucose, age, waist, cholestrol/hdl ratio and frame. An insight to make from the model is that the F-statistic shows an incredibly small value and tells us that at least one of the variables must be related to glyhb_star. The adjusted R-squared is low, suggesting a linear model was not the right choice. However,_______________
+
+```{r}
+fit = lm(glyhb_star ~stab.glu + age + waist + ratio+ factor(frame),data=diabetes_clean)
+ summary(fit)
+```
+
+The following are interpretaions of the estimated regression coefficients. 
+
+******
+
+* The average estimated value for glyhb_star with a large frame and all other variables being zero is '0.8330'.
+
+* The average estimated value for glyhb_star with a medium frame and all other variables being zero is '0.8639'.
+
+* The average estimated value for glyhb_star with a small frame and all other variables being zero is '0.8461'.
+
+* For each increase of one unit of 'stab.glu' the average glyhb_star value with a large frame will increase by ' 0.0035', keeping all other variables constant.
+
+* For each increase of one unit of 'age' the average glyhb_star value with a large frame will increase by '0.0033', keeping all other variables constant.
+
+* For each increase of one unit of 'waist' the average glyhb_star value with a large frame will increase by '0.0047', keeping all other variables constant.
+
+* For each increase of one unit of 'ratio' the average glyhb_star value with a large frame will increase by '0.0219', keeping all other variables constant.
+
+******
+
+Our model estimated fitted values are estimates of the true average of individuals with those observed variables. Using our model, the following is the estimated average glyhb_star value for an individual with these statistics, stab.glu = 90, age = 35, waist = 30, ratio = 5.1, and frame = small.
+
+```{r}
+new.values=data.frame( stab.glu =c(90), age=c(35), waist=c(30), ratio=c(5.1), frame=c('small'))
+
+predict(fit,new.values)
+```
+
+The difference between inference and prediction is what we plan to get out of our model. For inference, we hope to understand our data we have already seen. For prediction, we hope to predict the outcome for data we have never seen.
+
+The adavantage of using a linear regression model is that it is very simple opposed to a k-NN regression model. This makes it easily interpreted. However, this could be a great disadvantage by over generalizing our data and introducing a large bias. 
+
+## Reflection
