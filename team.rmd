@@ -132,7 +132,7 @@ No, the functions `spread` and `gather` are not exact complements of each other,
 
 ## Regression Models
 
-The following regression model was fit with the label glyhb_star and the following features: stabilized glucose, age, waist, cholestrol/hdl ratio and frame. An insight to make from the model is that the F-statistic shows an incredibly small value and tells us that at least one of the variables must be related to glyhb_star. The adjusted R-squared is low, suggesting a linear model was not the right choice. However,_______________
+The following regression model was fit with the label glyhb_star and the following features: stabilized glucose, age, waist, cholestrol/hdl ratio and frame. An insight to make from the model is that the F-statistic shows an incredibly small value and tells us that at least one of the variables must be related to glyhb_star. The adjusted R-squared is low, suggesting a linear model was not the right choice. Our exploratory analysis loosely suggested a linear model by the linear relationship seen between glyhb_star and 'frame' in the visualization section. 
 
 ```{r}
 fit = lm(glyhb_star ~stab.glu + age + waist + ratio+ factor(frame),data=diabetes_clean)
