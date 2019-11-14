@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 library(tidyverse)
+library(ggplot2)
 ```
 
 ## Data Preprocess
@@ -70,8 +71,64 @@ diabetes_clean %>% group_by(location) %>% summarise(mean.glyhb = mean(glyhb_star
 ```
 
 ## Visualizations 
+The following is a plot showing the summarized data of `diabetes_clean` grouped by frame and location.
+```{r}
+diabetes_clean %>% group_by(frame,location) %>% summarise (mean.glyhb_star= mean(glyhb_star))
+
+diabetes_clean %>%
+  group_by(frame, location) %>%
+  summarise (mean.glyhb_star= mean(glyhb_star)) %>%
+  ggplot(aes(x = frame, y = mean.glyhb_star, color=location)) + geom_point() + coord_flip()
+
+```
+
+
+
+The relationship between the variables `glyhb_star` and `ratio` seem to be similar across gender. The following plots will have one plot without the gender variable, and one that compares the variables using the `facet_wrap` function separating the plots by gender.
+```{r}
+ggplot(diabetes_clean,aes(x=glyhb_star,y=ratio,alpha=0.5)) + geom_point() + facet_wrap(~gender) 
+```
+
+
+```{r}
+ggplot(diabetes_clean,aes(x=glyhb_star,y=bp.1s,alpha=0.5)) + geom_point() 
+ggplot(diabetes_clean,aes(x=glyhb_star,y=bp.1s,alpha=0.5)) + geom_point() + facet_wrap(~gender)
+```
+
+```{r}
+ggplot(diabetes_clean,aes(x=glyhb_star,y=age,alpha=0.5)) + geom_point()
+ggplot(diabetes_clean,aes(x=glyhb_star,y=age,alpha=0.5)) + geom_point() + facet_wrap(~gender) 
+```
+
+
+```{r}
+ggplot(diabetes_clean,aes(x=glyhb_star,y=hip,alpha=0.5)) + geom_point()
+ggplot(diabetes_clean,aes(x=glyhb_star,y=hip,alpha=0.5)) + geom_point() + facet_wrap(~gender) 
+```
+
+
+```{r}
+ggplot(diabetes_clean,aes(x=glyhb_star,y=weight,alpha=0.5)) + geom_point()
+ggplot(diabetes_clean,aes(x=glyhb_star,y=weight,alpha=0.5)) + geom_point() + facet_wrap(~gender) 
+```
+
+
+
+Adding a trendline can improve this visualization and more clearly show the trends between `weight` and `hip` without overplotting.
+```{r}
+ggplot(diabetes_clean,aes(y=hip,x=waist,alpha=0.5)) + geom_point() + geom_smooth() + facet_wrap(~frame) 
+```
+
+Another way to visualize the plot would be to create a density plot to show the pattern of the data.
+```{r}
+ggplot(diabetes_clean, aes(y=hip, x=waist)) + geom_density_2d() + facet_wrap(~frame)
+```
+
 
 ## Messy Data
+`gather` and `spread` reshape the data. `spread` copies your data set removing the key and value columns, and replaces them by adding a new column for each unique value of the key column. `gather`, in a way, reverses the `spread` function by collecting a set of column names and replacing them with two columns. These two columns contain the now deleted column names and a column that contains the values of the deleted columns.
+
+No, the functions `spread` and `gather` are not exact complements of each other, because column type information gets lost when using the functions. `gather` discards the original column types and changes the variables into a single vector with one type. By using the `spread` function afterward, we spread the data frame back out and the funtion does not know the original data types of the variables.
 
 ## Regression Models
 
@@ -115,3 +172,4 @@ The difference between inference and prediction is what we plan to get out of ou
 The adavantage of using a linear regression model is that it is very simple opposed to a k-NN regression model. This makes it easily interpreted. However, this could be a great disadvantage by over generalizing our data and introducing a large bias. 
 
 ## Reflection
+We still consider data science to be a field for analyzing and exploring the massive amounts of information we have in today’s age. We have found that most surprisingly, the field is still very new and changing every day. Most fields in university are set in their base knowledge and remain unchanging, but learning that R is open sourced and ever growing is very interesting. We are most challenged by the sheer amount of concepts to be learned in data science, and the amount of different ways to approach a challenge. Finding the best way to approach an issue is the biggest challenge, and the most enjoyable part of data science.
